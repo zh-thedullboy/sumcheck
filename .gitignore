@@ -1,0 +1,6 @@
+toymodel/
+*.a
+*.o
+test
+*.py
+.vscode/
