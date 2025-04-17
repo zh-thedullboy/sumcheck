@@ -29,17 +29,12 @@ void Poly::add_term(const mono_t& exp, coef_t coef){
     bool exists = (it != monomials.end());
 
     // goldilocks忘了写 == 运算符了,暂时先这样搞... 
-    if(goldilocks(coef).val == 0){
-        if(exists){
-            monomials.erase(exp);
-        }
-    }else{
+    if(goldilocks(coef).val != 0){
         if(exists){
             monomials[exp] = monomials[exp] + coef;
             if(monomials[exp].val == 0) monomials.erase(exp);
         }else{
             monomials[exp] = coef.val;
-
 // debug use
 
 // std::cout << "Inserting: ";
@@ -76,7 +71,7 @@ goldilocks Poly::evaluate(assign_t assign){
     return res;
 }
 
-Poly Poly::subs(unsigned r, assign_t mask){
+Poly Poly::subsr(unsigned r, assign_t mask){
     deg_t newdeg(deg.begin(), deg.begin() + r);
     Poly sr(newdeg);
     for(const auto& [exp, coef] : monomials){
@@ -88,6 +83,21 @@ Poly Poly::subs(unsigned r, assign_t mask){
         sr.add_term(mono, newcoef);
     }
     return sr;
+}
+
+Poly Poly::subsl(assign_t mask){
+    unsigned r = mask.size();
+    deg_t newdeg(deg.begin() + r, deg.end());
+    Poly sl(newdeg);
+    for(const auto& [exp, coef] : monomials){
+        coef_t newcoef = coef;
+        for(int i = 0;i < r; ++i){
+            newcoef = newcoef * fpow(mask[i], exp[i]);
+        }
+        mono_t mono(exp.begin() + r, exp.end());
+        sl.add_term(mono, newcoef);
+    }
+    return sl;
 }
 
 goldilocks max(goldilocks a, goldilocks b){

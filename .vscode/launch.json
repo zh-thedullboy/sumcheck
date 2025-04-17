@@ -30,10 +30,10 @@
         "miDebuggerPath": "/usr/bin/gdb"
     },
     {
-        "name": "(gdb) test_prover",
+        "name": "(gdb) test_sumcheck",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${workspaceFolder}/test/test_polysub",
+        "program": "${workspaceFolder}/test/test_sumcheck",
         "args": [],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",

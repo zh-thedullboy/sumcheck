@@ -9,9 +9,6 @@ typedef __uint128_t i128;
 goldilocks::goldilocks(i64 v){
     val = v % p;
 }
-goldilocks goldilocks::minus(i64 v){
-    return goldilocks(p - v);
-}
 // goldilocks::goldilocks() : val(0) {}
 goldilocks goldilocks::operator+(const goldilocks& n) const{
     i128 sum = (i128)val + n.val;

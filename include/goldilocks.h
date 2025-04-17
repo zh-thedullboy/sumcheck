@@ -2,9 +2,11 @@
 #define _GOLDILOCKS_H_
 
 #include <cstdint>
-typedef uint64_t i64;
-typedef __uint128_t i128;
+#define GOLDILOCKS_ORDER ((1ull << 32) - 1) << 32 + 1
+
 class goldilocks{
+    typedef uint64_t i64;
+    typedef __uint128_t i128;
     private:
         i64 p = (((1ull << 32) - 1) << 32) + 1;
     public:
@@ -16,11 +18,12 @@ class goldilocks{
         goldilocks  operator*(const goldilocks& n) const;
         goldilocks&  operator=(const i64 n);
         goldilocks&  operator=(const goldilocks& n);
-        goldilocks minus(i64 v);
         void print() const;
 };
 
 class goldilocksFp2{
+    typedef uint64_t i64;
+    typedef __uint128_t i128;
     private:
         static goldilocks w; // ω^2 = w
     public:
