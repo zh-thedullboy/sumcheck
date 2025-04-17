@@ -19,15 +19,14 @@ goldilocks fpow(goldilocks base_, goldilocks exp_) {
     return goldilocks((uint64_t)result);
 }
 
-Poly::Poly(deg_t edg){
-    deg = deg;
+Poly::Poly(deg_t deg):deg(deg){
     nvar = deg.size();
     monomials = {};
 }
 
 void Poly::add_term(const mono_t& exp, coef_t coef){
     auto it = monomials.find(exp);
-    bool exists = (it == monomials.end());
+    bool exists = (it != monomials.end());
 
     // goldilocks忘了写 == 运算符了,暂时先这样搞... 
     if(goldilocks(coef).val == 0){
@@ -35,18 +34,77 @@ void Poly::add_term(const mono_t& exp, coef_t coef){
             monomials.erase(exp);
         }
     }else{
-        monomials[exp] = coef;
+        if(exists){
+            monomials[exp] = monomials[exp] + coef;
+            if(monomials[exp].val == 0) monomials.erase(exp);
+        }else{
+            monomials[exp] = coef.val;
+
+// debug use
+
+// std::cout << "Inserting: ";
+// for (const auto& e : exp) {
+//     std::cout << e.val << " ";
+// }
+// std::cout << " => " << coef.val << std::endl;
+
+// monomials[exp] = coef;
+
+// // Print map content after insertion
+// std::cout << "Map content after insertion:" << std::endl;
+// for (const auto& [exp_key, coef_val] : monomials) {
+//     std::cout << "Exp: ";
+//     for (const auto& e : exp_key) {
+//         std::cout << e.val << " ";
+//     }
+//     std::cout << "=> " << coef_val.val << std::endl;
+// }
+
+        }
     }
 }
 
 goldilocks Poly::evaluate(assign_t assign){
     goldilocks res = 0;
     for(const auto& [exp, coef] : monomials){
-        goldilocks m = 0;
+        goldilocks m = coef;
         for(int i = 0;i < nvar; ++i){
             m = m * fpow(assign[i], exp[i]);
         }
         res = res + m;
+    }
+    return res;
+}
+
+Poly Poly::subs(unsigned r, assign_t mask){
+    deg_t newdeg(deg.begin(), deg.begin() + r);
+    Poly sr(newdeg);
+    for(const auto& [exp, coef] : monomials){
+        coef_t newcoef = coef;
+        for(int i = r;i < nvar; ++i){
+            newcoef = newcoef * fpow(mask[i - r], exp[i]);
+        }
+        mono_t mono(exp.begin(), exp.begin() + r);
+        sr.add_term(mono, newcoef);
+    }
+    return sr;
+}
+
+goldilocks max(goldilocks a, goldilocks b){
+    return (a.val > b.val) ? a: b;
+}
+
+Poly Poly::operator+(const Poly& other)const{
+    deg_t newdeg = {};
+    for(int i = 0;i < deg.size(); ++i){
+        newdeg.push_back(max(deg[i], other.deg[i]));
+    }
+    Poly res = Poly(newdeg);
+    for(const auto& [exp, coef] : monomials){
+        res.add_term(exp, coef);
+    }
+    for(const auto& [exp, coef] : other.monomials){
+        res.add_term(exp, coef);
     }
     return res;
 }

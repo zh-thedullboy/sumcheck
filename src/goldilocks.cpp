@@ -6,9 +6,13 @@
 typedef uint64_t i64;
 typedef __uint128_t i128;
 
-goldilocks::goldilocks(i64 v = 0){
+goldilocks::goldilocks(i64 v){
     val = v % p;
 }
+goldilocks goldilocks::minus(i64 v){
+    return goldilocks(p - v);
+}
+// goldilocks::goldilocks() : val(0) {}
 goldilocks goldilocks::operator+(const goldilocks& n) const{
     i128 sum = (i128)val + n.val;
     return goldilocks((i64)(sum % p));
@@ -21,11 +25,15 @@ goldilocks goldilocks::operator*(const goldilocks& n) const{
     i128 product = (i128)val * n.val;
     return goldilocks((i64)(product % p));
 }
-goldilocks goldilocks::operator=(const i64 n) const{
-    return goldilocks(n);
+goldilocks& goldilocks::operator=(const i64 n){
+    val = n % p;
+    return *this;
 }
-goldilocks goldilocks::operator=(const goldilocks n) const{
-    return goldilocks(n.val);
+goldilocks& goldilocks::operator=(const goldilocks& n){
+    if(this != &n){
+        val = n.val;
+    }
+    return *this;
 }
 void goldilocks::print() const {
     std::cout << val << std::endl;

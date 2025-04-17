@@ -9,13 +9,14 @@ class goldilocks{
         i64 p = (((1ull << 32) - 1) << 32) + 1;
     public:
         i64 val;
-        goldilocks(i64 v);
-        goldilocks() : val(0) {}
+        goldilocks(i64 v = 0);
+        // goldilocks();
         goldilocks  operator+(const goldilocks& n) const;
         goldilocks  operator-(const goldilocks& n) const;
         goldilocks  operator*(const goldilocks& n) const;
-        goldilocks  operator=(const i64 n) const;
-        goldilocks  operator=(const goldilocks n) const;
+        goldilocks&  operator=(const i64 n);
+        goldilocks&  operator=(const goldilocks& n);
+        goldilocks minus(i64 v);
         void print() const;
 };
 

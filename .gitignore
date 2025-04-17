@@ -3,4 +3,5 @@ toymodel/
 *.o
 test
 *.py
-.vscode/
+foo.cpp
+foo
