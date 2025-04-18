@@ -1,7 +1,6 @@
 toymodel/
 *.a
 *.o
-test
 *.py
 foo.cpp
 foo
