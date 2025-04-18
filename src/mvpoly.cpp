@@ -80,6 +80,7 @@ Poly Poly::subsr(unsigned r, assign_t mask) const{
             newcoef = newcoef * fpow(mask[i - r], exp[i]);
         }
         mono_t mono(exp.begin(), exp.begin() + r);
+
         sr.add_term(mono, newcoef);
     }
     return sr;

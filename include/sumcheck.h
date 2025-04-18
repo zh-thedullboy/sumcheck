@@ -15,7 +15,7 @@ class Prover{
         unsigned nrnd;
     public:
         Prover(const Poly& g);
-        Poly get_sum(const unsigned round, const vector<goldilocks>& r) const;
+        Poly get_sum(const unsigned round, const std::vector<goldilocks>& r) const;
 };
 
 class Verifier{
@@ -25,8 +25,8 @@ class Verifier{
         Oracle oracle;
         unsigned nvar;
         unsigned nrnd;
-        vector<goldilocks> challenges;
-        vector<goldilocks> get_random(const unsigned round) const;
+        std::vector<goldilocks> challenges;
+        std::vector<goldilocks> get_random(const unsigned round) const;
     public:
         Verifier(Poly g, Oracle oracle);
         bool exec_proto(const Prover& prover) const;

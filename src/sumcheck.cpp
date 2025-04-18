@@ -26,23 +26,24 @@ Prover::Prover(const Poly& g){
     nvar = nrnd = g.get_nvar();
 }
 
-Poly Prover::get_sum(const unsigned round, const vector<goldilocks>& r) const{
+Poly Prover::get_sum(const unsigned round, const std::vector<goldilocks>& r) const{
     std::cout<< "\nround" << round << '\n';
     
     unsigned free_vars = nrnd - round;
 
     goldilocks deg_j = round>0? g.get_deg(round - 1) : 0;
 
-    Poly g_j(vector<goldilocks>(g.deg.begin(), g.deg.begin() + round));
+    Poly g_j(std::vector<goldilocks>(g.deg.begin(), g.deg.begin() + round));
 
     for(unsigned x = 0; x < (1ull << free_vars); ++x){
         std::string bit_x = get_bin(x, free_vars);
-        vector<goldilocks> assign = {};
+        std::vector<goldilocks> assign = {};
         for(const auto& bit: bit_x){
             if(bit & 1) assign.push_back(1);
             else assign.push_back(0);
         }
         Poly res = g.subsr(round, assign);
+        // res.print();
         // for(auto e: assign){
         //     e.print();
         // }
@@ -75,9 +76,9 @@ Verifier::Verifier(Poly g, Oracle oracle):g(g), oracle(oracle){
     }
 } 
 
-vector<goldilocks> Verifier::get_random(const unsigned round) const{
+std::vector<goldilocks> Verifier::get_random(const unsigned round) const{
     if(round <= 1) return {};
-    vector<goldilocks> r(challenges.begin(), challenges.begin() + round - 1);
+    std::vector<goldilocks> r(challenges.begin(), challenges.begin() + round - 1);
     return r;
 }
 
@@ -85,19 +86,19 @@ bool Verifier::exec_proto(const Prover& prover) const{
     goldilocks sum;
     Poly last_gj;
     for (int round = 0;round < nrnd + 1; ++round){
-        vector<goldilocks> rands = get_random(round);
+        std::vector<goldilocks> rands = get_random(round);
         Poly g_j = prover.get_sum(round, rands);
         if (round == 0) sum = g_j.monomials[{}];
         else if(round == 1){
             if(!(sum == g_j.evaluate({0}) + g_j.evaluate({1}))) return false;
         }
         else if(round > 1){
-            std::cout<< "last round received : ";
-            last_gj.print();
-            std::cout<< "this round received : ";
-            g_j.print();
-            std::cout<< "challenge : ";
-            challenges[round - 2].print();
+            // std::cout<< "last round received : ";
+            // last_gj.print();
+            // std::cout<< "this round received : ";
+            // g_j.print();
+            // std::cout<< "challenge : ";
+            // challenges[round - 2].print();
             if(!(last_gj.evaluate({challenges[round - 2]}) == g_j.evaluate({0}) + g_j.evaluate({1}))) return false;
         }
         std::cout <<"safely passed round " << round << '\n';

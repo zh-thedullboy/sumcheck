@@ -6,9 +6,6 @@
 #include <map>
 #include <iostream>
 
-using std::map;
-using std::vector;
-
 // fast exponentiation on goldilocks field
 goldilocks fpow(goldilocks base_, goldilocks exp_);
 
@@ -27,14 +24,14 @@ struct goldilocks_vector_less {
 // viewing the multi-variate polynomial as a combination of monomials
 class Poly{
 public:
-    typedef vector<goldilocks> mono_t;
+    typedef std::vector<goldilocks> mono_t;
     typedef goldilocks coef_t;
-    typedef vector<goldilocks> deg_t;
-    typedef vector<goldilocks> assign_t;
+    typedef std::vector<goldilocks> deg_t;
+    typedef std::vector<goldilocks> assign_t;
  private:
     unsigned nvar;  // number of variables
 public:
-    map<mono_t, coef_t, goldilocks_vector_less> monomials;
+    std::map<mono_t, coef_t, goldilocks_vector_less> monomials;
     Poly(deg_t deg = {});
     goldilocks evaluate(assign_t assign) const;
     void add_term(const mono_t& exp, coef_t coef);
