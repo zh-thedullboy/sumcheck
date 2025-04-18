@@ -22,6 +22,9 @@ goldilocks goldilocks::operator*(const goldilocks& n) const{
     i128 product = (i128)val * n.val;
     return goldilocks((i64)(product % p));
 }
+bool goldilocks::operator==(const goldilocks& n) const{
+    return val == n.val;
+}
 goldilocks& goldilocks::operator=(const i64 n){
     val = n % p;
     return *this;

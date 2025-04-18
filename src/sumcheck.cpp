@@ -3,6 +3,7 @@
 #include "sumcheck.h"
 #include <iostream>
 #include <string>
+#include <random>
 
 // returns binary representation of x with left padding to length n
 std::string get_bin(const unsigned x, const unsigned n){
@@ -25,7 +26,7 @@ Prover::Prover(const Poly& g){
     nvar = nrnd = g.get_nvar();
 }
 
-Poly Prover::get_sum(const unsigned round, const vector<goldilocks>& r){
+Poly Prover::get_sum(const unsigned round, const vector<goldilocks>& r) const{
     std::cout<< "\nround" << round << '\n';
     
     unsigned free_vars = nrnd - round;
@@ -62,4 +63,50 @@ Poly Prover::get_sum(const unsigned round, const vector<goldilocks>& r){
     // }
     // s_j.print();
     return s_j;
+}
+
+Verifier::Verifier(Poly g, Oracle oracle):g(g), oracle(oracle){
+    nrnd = nvar = g.get_nvar();
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+    std::uniform_int_distribution<uint64_t> dis(0, GOLDILOCKS_ORDER);
+    for(int i = 0;i < nrnd; ++i){
+        challenges.push_back(goldilocks(dis(gen)));
+    }
+} 
+
+vector<goldilocks> Verifier::get_random(const unsigned round) const{
+    if(round <= 1) return {};
+    vector<goldilocks> r(challenges.begin(), challenges.begin() + round - 1);
+    return r;
+}
+
+bool Verifier::exec_proto(const Prover& prover) const{
+    goldilocks sum;
+    Poly last_gj;
+    for (int round = 0;round < nrnd + 1; ++round){
+        vector<goldilocks> rands = get_random(round);
+        Poly g_j = prover.get_sum(round, rands);
+        if (round == 0) sum = g_j.monomials[{}];
+        else if(round == 1){
+            if(!(sum == g_j.evaluate({0}) + g_j.evaluate({1}))) return false;
+        }
+        else if(round > 1){
+            std::cout<< "last round received : ";
+            last_gj.print();
+            std::cout<< "this round received : ";
+            g_j.print();
+            std::cout<< "challenge : ";
+            challenges[round - 2].print();
+            if(!(last_gj.evaluate({challenges[round - 2]}) == g_j.evaluate({0}) + g_j.evaluate({1}))) return false;
+        }
+        std::cout <<"safely passed round " << round << '\n';
+        last_gj = g_j;
+    }
+
+    if(last_gj.evaluate({challenges[nrnd - 1]}) == oracle.evaluate(challenges)){
+        std::cout<<"passed sum is " << sum.val << std::endl;
+        return true;
+    }
+    else return false;
 }

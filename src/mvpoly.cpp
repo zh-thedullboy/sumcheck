@@ -59,7 +59,7 @@ void Poly::add_term(const mono_t& exp, coef_t coef){
     }
 }
 
-goldilocks Poly::evaluate(assign_t assign){
+goldilocks Poly::evaluate(assign_t assign) const{
     goldilocks res = 0;
     for(const auto& [exp, coef] : monomials){
         goldilocks m = coef;
@@ -71,7 +71,7 @@ goldilocks Poly::evaluate(assign_t assign){
     return res;
 }
 
-Poly Poly::subsr(unsigned r, assign_t mask){
+Poly Poly::subsr(unsigned r, assign_t mask) const{
     deg_t newdeg(deg.begin(), deg.begin() + r);
     Poly sr(newdeg);
     for(const auto& [exp, coef] : monomials){
@@ -85,7 +85,7 @@ Poly Poly::subsr(unsigned r, assign_t mask){
     return sr;
 }
 
-Poly Poly::subsl(assign_t mask){
+Poly Poly::subsl(assign_t mask) const{
     unsigned r = mask.size();
     deg_t newdeg(deg.begin() + r, deg.end());
     Poly sl(newdeg);
@@ -104,7 +104,7 @@ goldilocks max(goldilocks a, goldilocks b){
     return (a.val > b.val) ? a: b;
 }
 
-Poly Poly::operator+(const Poly& other)const{
+Poly Poly::operator+(const Poly& other) const{
     deg_t newdeg = {};
     for(int i = 0;i < deg.size(); ++i){
         newdeg.push_back(max(deg[i], other.deg[i]));
@@ -117,4 +117,37 @@ Poly Poly::operator+(const Poly& other)const{
         res.add_term(exp, coef);
     }
     return res;
+}
+
+bool Poly::operator==(const Poly& other) const{
+    for(const auto& [exp, coef] : monomials){
+        if(!(other.monomials.at(exp) == coef)) return false;
+     }
+    for(const auto& [exp, coef] : other.monomials){
+        if(!(monomials.at(exp) == coef)) return false;
+    }
+    return true;
+}
+
+void Poly::print() const{
+    bool first = true;
+    for (const auto& [exp, coef] : monomials) {
+        if (!first) std::cout << " + ";
+        first = false;
+
+        // print coefficient
+        std::cout << coef.val;
+
+        // print exponentiations
+        for (size_t i = 0; i < exp.size(); ++i) {
+            if (exp[i].val != 0) {
+                std::cout << "*x" << i + 1;
+                if (exp[i].val != 1) {
+                    std::cout << "^" << exp[i].val;
+                }
+            }
+        }
+    }
+    if (first) std::cout << "0";  // empty polynomial
+    std::cout << std::endl;
 }

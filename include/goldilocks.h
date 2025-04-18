@@ -18,6 +18,7 @@ class goldilocks{
         goldilocks  operator*(const goldilocks& n) const;
         goldilocks&  operator=(const i64 n);
         goldilocks&  operator=(const goldilocks& n);
+        bool operator==(const goldilocks&n) const;
         void print() const;
 };
 
